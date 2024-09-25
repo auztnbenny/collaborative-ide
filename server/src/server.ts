@@ -6,15 +6,15 @@ import { SocketEvent, SocketId } from "./types/socket"
 import { USER_CONNECTION_STATUS, User } from "./types/user"
 import { Server } from "socket.io"
 import path from "path"
+// Importing in your component or server.ts file
+import getAIResponse from './aiService'; // Use default import syntax
 
 dotenv.config()
 
 const app = express()
 
 app.use(express.json())
-
 app.use(cors())
-
 app.use(express.static(path.join(__dirname, "public"))) // Serve static files
 
 const server = http.createServer(app)
@@ -30,15 +30,12 @@ let userSocketMap: User[] = []
 
 // Function to get all users in a room
 function getUsersInRoom(roomId: string): User[] {
-	return userSocketMap.filter((user) => user.roomId == roomId)
+	return userSocketMap.filter((user) => user.roomId === roomId)
 }
 
 // Function to get room id by socket id
 function getRoomId(socketId: SocketId): string | null {
-	const roomId = userSocketMap.find(
-		(user) => user.socketId === socketId
-	)?.roomId
-
+	const roomId = userSocketMap.find((user) => user.socketId === socketId)?.roomId
 	if (!roomId) {
 		console.error("Room ID is undefined for socket ID:", socketId)
 		return null
@@ -58,7 +55,6 @@ function getUserBySocketId(socketId: SocketId): User | null {
 io.on("connection", (socket) => {
 	// Handle user actions
 	socket.on(SocketEvent.JOIN_REQUEST, ({ roomId, username }) => {
-		// Check is username exist in the room
 		const isUsernameExist = getUsersInRoom(roomId).filter(
 			(u) => u.username === username
 		)
@@ -87,36 +83,28 @@ io.on("connection", (socket) => {
 		const user = getUserBySocketId(socket.id)
 		if (!user) return
 		const roomId = user.roomId
-		socket.broadcast
-			.to(roomId)
-			.emit(SocketEvent.USER_DISCONNECTED, { user })
+		socket.broadcast.to(roomId).emit(SocketEvent.USER_DISCONNECTED, { user })
 		userSocketMap = userSocketMap.filter((u) => u.socketId !== socket.id)
 		socket.leave(roomId)
 	})
 
 	// Handle file actions
-	socket.on(
-		SocketEvent.SYNC_FILE_STRUCTURE,
-		({ fileStructure, openFiles, activeFile, socketId }) => {
-			io.to(socketId).emit(SocketEvent.SYNC_FILE_STRUCTURE, {
-				fileStructure,
-				openFiles,
-				activeFile,
-			})
-		}
-	)
+	socket.on(SocketEvent.SYNC_FILE_STRUCTURE, ({ fileStructure, openFiles, activeFile, socketId }) => {
+		io.to(socketId).emit(SocketEvent.SYNC_FILE_STRUCTURE, {
+			fileStructure,
+			openFiles,
+			activeFile,
+		})
+	})
 
-	socket.on(
-		SocketEvent.DIRECTORY_CREATED,
-		({ parentDirId, newDirectory }) => {
-			const roomId = getRoomId(socket.id)
-			if (!roomId) return
-			socket.broadcast.to(roomId).emit(SocketEvent.DIRECTORY_CREATED, {
-				parentDirId,
-				newDirectory,
-			})
-		}
-	)
+	socket.on(SocketEvent.DIRECTORY_CREATED, ({ parentDirId, newDirectory }) => {
+		const roomId = getRoomId(socket.id)
+		if (!roomId) return
+		socket.broadcast.to(roomId).emit(SocketEvent.DIRECTORY_CREATED, {
+			parentDirId,
+			newDirectory,
+		})
+	})
 
 	socket.on(SocketEvent.DIRECTORY_UPDATED, ({ dirId, children }) => {
 		const roomId = getRoomId(socket.id)
@@ -139,17 +127,13 @@ io.on("connection", (socket) => {
 	socket.on(SocketEvent.DIRECTORY_DELETED, ({ dirId }) => {
 		const roomId = getRoomId(socket.id)
 		if (!roomId) return
-		socket.broadcast
-			.to(roomId)
-			.emit(SocketEvent.DIRECTORY_DELETED, { dirId })
+		socket.broadcast.to(roomId).emit(SocketEvent.DIRECTORY_DELETED, { dirId })
 	})
 
 	socket.on(SocketEvent.FILE_CREATED, ({ parentDirId, newFile }) => {
 		const roomId = getRoomId(socket.id)
 		if (!roomId) return
-		socket.broadcast
-			.to(roomId)
-			.emit(SocketEvent.FILE_CREATED, { parentDirId, newFile })
+		socket.broadcast.to(roomId).emit(SocketEvent.FILE_CREATED, { parentDirId, newFile })
 	})
 
 	socket.on(SocketEvent.FILE_UPDATED, ({ fileId, newContent }) => {
@@ -205,10 +189,26 @@ io.on("connection", (socket) => {
 	socket.on(SocketEvent.SEND_MESSAGE, ({ message }) => {
 		const roomId = getRoomId(socket.id)
 		if (!roomId) return
-		socket.broadcast
-			.to(roomId)
-			.emit(SocketEvent.RECEIVE_MESSAGE, { message })
+		socket.broadcast.to(roomId).emit(SocketEvent.RECEIVE_MESSAGE, { message })
 	})
+
+	// Handle AI chat messages
+	socket.on(SocketEvent.CHATBOT_MESSAGE, async (message: string) => {
+		const roomId = getRoomId(socket.id)
+		if (!roomId) return
+
+		// Emit the user message back to the room
+		socket.broadcast.to(roomId).emit(SocketEvent.CHATBOT_MESSAGE, { message });
+
+		try {
+			// Get AI response
+			const aiResponse = await getAIResponse(message);
+			socket.emit(SocketEvent.CHATBOT_RESPONSE, aiResponse); // Send response back to the user
+		} catch (error) {
+			console.error('Error in AI response:', error);
+			socket.emit(SocketEvent.CHATBOT_ERROR, 'Error processing your request.'); // Emit error to user
+		}
+	});
 
 	// Handle cursor position
 	socket.on(SocketEvent.TYPING_START, ({ cursorPosition }) => {
@@ -240,15 +240,11 @@ io.on("connection", (socket) => {
 	socket.on(SocketEvent.REQUEST_DRAWING, () => {
 		const roomId = getRoomId(socket.id)
 		if (!roomId) return
-		socket.broadcast
-			.to(roomId)
-			.emit(SocketEvent.REQUEST_DRAWING, { socketId: socket.id })
+		socket.broadcast.to(roomId).emit(SocketEvent.REQUEST_DRAWING, { socketId: socket.id })
 	})
 
 	socket.on(SocketEvent.SYNC_DRAWING, ({ drawingData, socketId }) => {
-		socket.broadcast
-			.to(socketId)
-			.emit(SocketEvent.SYNC_DRAWING, { drawingData })
+		socket.broadcast.to(socketId).emit(SocketEvent.SYNC_DRAWING, { drawingData })
 	})
 
 	socket.on(SocketEvent.DRAWING_UPDATE, ({ snapshot }) => {
