@@ -20,9 +20,9 @@ enum SocketEvent {
 	USER_ONLINE = "online",
 	SEND_MESSAGE = "send-message",
 	RECEIVE_MESSAGE = "receive-message",
-	CHATBOT_MESSAGE = "chatbot-message", // New event for sending messages to the AI
-	CHATBOT_RESPONSE = "chatbot-response", // New event for receiving AI responses
-	CHATBOT_ERROR = "chatbot-error", // New event for handling AI errors
+	CHATBOT_MESSAGE = 'CHATBOT_MESSAGE',
+	CHATBOT_RESPONSE = 'CHATBOT_RESPONSE',
+	CHATBOT_ERROR = 'CHATBOT_ERROR',// New event for handling AI errors
 	TYPING_START = "typing-start",
 	TYPING_PAUSE = "typing-pause",
 	USERNAME_EXISTS = "username-exists",
