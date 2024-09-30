@@ -7,12 +7,11 @@ import useWindowDimensions from "@/hooks/useWindowDimensions"
 import { ACTIVITY_STATE } from "@/types/app"
 import { SocketEvent } from "@/types/socket"
 import { VIEWS } from "@/types/view"
-import { IoCodeSlash } from "react-icons/io5"  // Import AI Chat Icon
+import { IoCodeSlash } from "react-icons/io5"
 import { MdOutlineDraw } from "react-icons/md"
 import cn from "classnames"
-import { BsRobot } from "react-icons/bs";  // AI Robot Icon
+import { BsRobot } from "react-icons/bs";
 import AIChat from "../ai chat/AIChat"
-  // Import the AI Chat Component
 
 function Sidebar() {
     const {
@@ -43,7 +42,7 @@ function Sidebar() {
     // Update the viewComponents to include AI Chat
     const updatedViewComponents = {
         ...viewComponents,
-        [VIEWS.AI_CHAT]: <AIChat />, // Add the AI Chat component
+        [VIEWS.AI_CHAT]: <AIChat />,
     };
 
     return (
@@ -79,8 +78,8 @@ function Sidebar() {
 
                 {/* AI Chat Button */}
                 <SidebarButton
-                    viewName={VIEWS.AI_CHAT}  // Add AI Chat View name
-                    icon={<BsRobot size={30} />}  // Use Robot Icon
+                    viewName={VIEWS.AI_CHAT}
+                    icon={<BsRobot size={30} />}
                 />
 
                 {/* Button to change activity state coding or drawing */}

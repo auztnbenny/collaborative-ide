@@ -1,48 +1,60 @@
-// src/components/AIChat.tsx
-
-import React, { useState } from 'react';
-import { useSocket } from "@/context/SocketContext"; // Import your socket context if using socket.io
+import React, { useState, useEffect } from 'react';
+import { useSocket } from '@/context/SocketContext';
+import { SocketEvent } from '@/types/socket';
 
 const AIChat = () => {
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState<any[]>([]);
-    const { socket } = useSocket(); // Use your socket connection
+    const { socket } = useSocket();
+
+    // Single useEffect for Socket Events
+    useEffect(() => {
+        const handleResponse = (response: string) => {
+            console.log("AI Response received on frontend:", response);  // Log AI response
+            const newMessage = { text: response, sender: 'ai' };
+            setMessages((prevMessages) => [...prevMessages, newMessage]);
+        };
+
+        socket.on(SocketEvent.CHATBOT_RESPONSE, handleResponse);
+
+        return () => {
+            socket.off(SocketEvent.CHATBOT_RESPONSE, handleResponse);
+        };
+    }, [socket]);
 
     const handleSend = () => {
         if (input.trim() === '') return;
 
         const newMessage = { text: input, sender: 'user' };
         setMessages([...messages, newMessage]);
-
-        // Emit the user input to the server (or your AI service)
-        socket.emit('aiChatMessage', input); // Replace with your appropriate event and message structure
+        socket.emit(SocketEvent.CHATBOT_MESSAGE, input);
 
         // Clear input field
         setInput('');
     };
 
-    // Handle receiving AI response
-    socket.on('aiChatResponse', (response) => {
-        const newMessage = { text: response, sender: 'ai' };
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
-    });
-
     return (
-        <div className="ai-chat-container">
-            <div className="messages">
+        <div className="ai-chat-container flex flex-col h-full">
+            <div className="messages flex-grow overflow-auto p-4">
                 {messages.map((msg, index) => (
-                    <div key={index} className={msg.sender}>
-                        <strong>{msg.sender === 'user' ? 'You' : 'AI'}:</strong> {msg.text}
+                    <div key={index} className={`mb-2 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
+                        <span className={`inline-block p-2 rounded ${msg.sender === 'user' ? 'bg-blue-500' : 'bg-gray-500'}`}>
+                            {msg.text}
+                        </span>
                     </div>
                 ))}
             </div>
-            <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Type your message..."
-            />
-            <button onClick={handleSend}>Send</button>
+            <div className="input-area flex p-4">
+                <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                    placeholder="Type your message..."
+                    className="flex-grow mr-2 p-2 rounded border"
+                />
+                <button onClick={handleSend} className="bg-blue-500 text-white p-2 rounded">Send</button>
+            </div>
         </div>
     );
 };

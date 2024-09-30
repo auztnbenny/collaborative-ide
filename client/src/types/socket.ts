@@ -26,6 +26,11 @@ enum SocketEvent {
     REQUEST_DRAWING = "request-drawing",
     SYNC_DRAWING = "sync-drawing",
     DRAWING_UPDATE = "drawing-update",
+    AI_CHAT_RESPONSE = "AI_CHAT_RESPONSE",
+    AI_CHAT_MESSAGE = "AI_CHAT_MESSAGE",
+    CHATBOT_RESPONSE = "CHATBOT_RESPONSE",
+    CHATBOT_ERROR = "CHATBOT_ERROR",
+    CHATBOT_MESSAGE = "CHATBOT_MESSAGE",
 }
 
 interface SocketContext {
