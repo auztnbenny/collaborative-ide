@@ -1,62 +1,63 @@
-import React, { useState, useEffect } from 'react';
-import { useSocket } from '@/context/SocketContext';
-import { SocketEvent } from '@/types/socket';
+import React, { useState } from 'react';
+import { toast } from 'react-hot-toast';
 
-const AIChat = () => {
-    const [input, setInput] = useState('');
-    const [messages, setMessages] = useState<any[]>([]);
-    const { socket } = useSocket();
+const AIAssistant = () => {
+    const [question, setQuestion] = useState('');
+    const [answer, setAnswer] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    // Single useEffect for Socket Events
-    useEffect(() => {
-        const handleResponse = (response: string) => {
-            console.log("AI Response received on frontend:", response);  // Log AI response
-            const newMessage = { text: response, sender: 'ai' };
-            setMessages((prevMessages) => [...prevMessages, newMessage]);
-        };
+    const handleAsk = async () => {
+        if (!question.trim()) {
+            toast.error('Please enter a question.');
+            return;
+        }
 
-        socket.on(SocketEvent.CHATBOT_RESPONSE, handleResponse);
+        setLoading(true);
+        setAnswer('');
 
-        return () => {
-            socket.off(SocketEvent.CHATBOT_RESPONSE, handleResponse);
-        };
-    }, [socket]);
+        try {
+            const response = await fetch('/api/ai/ask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ question }),
+            });
 
-    const handleSend = () => {
-        if (input.trim() === '') return;
-
-        const newMessage = { text: input, sender: 'user' };
-        setMessages([...messages, newMessage]);
-        socket.emit(SocketEvent.CHATBOT_MESSAGE, input);
-
-        // Clear input field
-        setInput('');
+            const data = await response.json();
+            if (response.ok) {
+                setAnswer(data.answer);
+            } else {
+                toast.error(data.error || 'Failed to get a response from AI.');
+            }
+        } catch (error) {
+            console.error('Error asking AI:', error);
+            toast.error('An error occurred while asking the AI.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
-        <div className="ai-chat-container flex flex-col h-full">
-            <div className="messages flex-grow overflow-auto p-4">
-                {messages.map((msg, index) => (
-                    <div key={index} className={`mb-2 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
-                        <span className={`inline-block p-2 rounded ${msg.sender === 'user' ? 'bg-blue-500' : 'bg-gray-500'}`}>
-                            {msg.text}
-                        </span>
-                    </div>
-                ))}
-            </div>
-            <div className="input-area flex p-4">
-                <input
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                    placeholder="Type your message..."
-                    className="flex-grow mr-2 p-2 rounded border"
-                />
-                <button onClick={handleSend} className="bg-blue-500 text-white p-2 rounded">Send</button>
-            </div>
+        <div className="ai-assistant-container">
+            <input
+                type="text"
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                placeholder="Ask a question..."
+                disabled={loading}
+                className="ai-input"
+            />
+            <button onClick={handleAsk} disabled={loading} className="ai-button">
+                {loading ? 'Asking...' : 'Ask AI'}
+            </button>
+            {answer && (
+                <div className="ai-answer">
+                    <strong>Answer:</strong> <pre>{answer}</pre>
+                </div>
+            )}
         </div>
     );
 };
 
-export default AIChat;
+export default AIAssistant;

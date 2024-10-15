@@ -31,6 +31,8 @@ enum SocketEvent {
     CHATBOT_RESPONSE = "CHATBOT_RESPONSE",
     CHATBOT_ERROR = "CHATBOT_ERROR",
     CHATBOT_MESSAGE = "CHATBOT_MESSAGE",
+    ROOM_JOINED = "ROOM_JOINED",
+    JOIN_ROOM = "JOIN_ROOM"
 }
 
 interface SocketContext {
