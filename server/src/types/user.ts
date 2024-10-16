@@ -1,16 +1,14 @@
-enum USER_CONNECTION_STATUS {
-	OFFLINE = "offline",
-	ONLINE = "online",
+export enum USER_CONNECTION_STATUS {
+    ONLINE = 'online',
+    OFFLINE = 'offline',
 }
 
-interface User {
-	username: string
-	roomId: string
-	status: USER_CONNECTION_STATUS
-	cursorPosition: number
-	typing: boolean
-	currentFile: string | null
-	socketId: string
+export interface User {
+    username: string;
+    roomId: string;
+    status: USER_CONNECTION_STATUS;
+    cursorPosition: number;
+    typing: boolean;
+    socketId: string;
+    currentFile: string | null;
 }
-
-export { USER_CONNECTION_STATUS, User }
