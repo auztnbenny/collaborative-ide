@@ -2,12 +2,12 @@ import { defineConfig } from "vite"
 import react from "@vitejs/plugin-react"
 import { fileURLToPath, URL } from "url"
 
-// https://vitejs.dev/config/
 export default defineConfig({
     plugins: [react()],
     build: {
         chunkSizeWarningLimit: 1600,
         rollupOptions: {
+            external: ["path", "util"], // Prevent bundling Node.js modules
             output: {
                 manualChunks(id) {
                     if (id.includes("node_modules")) {
