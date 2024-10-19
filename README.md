@@ -83,18 +83,18 @@ actor "AI Assistant" as ai
 actor "QR Code Testing" as qr
 
 rectangle CollaborativeIDE {
-  leader -- (Create Project)
-  leader -- (Assign Roles)
-  leader -- (Write Code)
-  leader -- (Test Application)
-  developer -- (Join Project)
-  developer -- (Write Code)
-  developer -- (Test Application)
-  developer -- (View Project)
-  (Write Code) .> (AI Code Assistance) : include
-  (Test Application) .> (Generate QR Code for Testing) : include
-  ai -- (AI Code Assistance)
-  qr -- (Generate QR Code for Testing)
+leader -- (Create Project)
+leader -- (Assign Roles)
+leader -- (Write Code)
+leader -- (Test Application)
+developer -- (Join Project)
+developer -- (Write Code)
+developer -- (Test Application)
+developer -- (View Project)
+(Write Code) .> (AI Code Assistance) : include
+(Test Application) .> (Generate QR Code for Testing) : include
+ai -- (AI Code Assistance)
+qr -- (Generate QR Code for Testing)
 }
 @enduml
 Contributing
