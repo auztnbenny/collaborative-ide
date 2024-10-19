@@ -10,7 +10,9 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import aiRoutes from './routes/ai'; 
 import getAIResponse from './aiService';
 import lintRoutes from './routes/lint'; 
-// Import the linting routes
+import terminalRoutes from './routes/terminal'; 
+
+import { exec } from 'child_process'; // Import exec for terminal commands
 
 dotenv.config();
 
@@ -20,7 +22,8 @@ app.use(express.json());
 app.use(cors());
 app.use('/api/lint', lintRoutes); // Use the linting routes
 app.use('/api/ai', aiRoutes); // Use the AI routes
-app.use(express.static(path.join(__dirname, "public"))); // Serve static files
+app.use(express.static(path.join(__dirname, "public")));
+app.use('/api/terminal', terminalRoutes);  // Serve static files
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -140,6 +143,21 @@ io.on("connection", (socket) => {
             }
             socket.emit(SocketEvent.CHATBOT_ERROR, "An error occurred while processing your request.");
         }
+    });
+
+    // New event handler for terminal commands
+    socket.on('terminalCommand', (command) => {
+        exec(command, (error, stdout, stderr) => {
+            if (error) {
+                socket.emit('terminalOutput', `Error: ${error.message}\n`);
+                return;
+            }
+            if (stderr) {
+                socket.emit('terminalOutput', `${stderr}\n`);
+                return;
+            }
+            socket.emit('terminalOutput', `${stdout}\n`);
+        });
     });
 });
 

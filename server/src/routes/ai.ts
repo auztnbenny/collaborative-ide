@@ -1,51 +1,42 @@
-     // routes/ai.ts
-     import express from 'express';
-     import axios from 'axios';
-     import dotenv from 'dotenv';
+import express, { Request, Response } from 'express';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import dotenv from 'dotenv';
 
-     dotenv.config();
-     const router = express.Router();
+dotenv.config();
 
-     router.post('/ask', async (req, res) => {
-         const { question, code } = req.body;
+const router = express.Router();
 
-         if (!question || typeof question !== 'string') {
-             return res.status(400).json({ error: 'Invalid question format. "question" must be a non-empty string.' });
-         }
+// Ensure your API Key is set
+const apiKey = process.env.GOOGLE_API_KEY;
+if (!apiKey) {
+    throw new Error("API key not found. Please set the GOOGLE_API_KEY environment variable.");
+}
 
-         let prompt = `User: ${question}\n`;
-         if (code && typeof code === 'string') {
-             prompt += `Code Context: ${code}\n`;
-         }
-         prompt += `AI Assistant:`;
+// Initialize the Google Generative AI client
+const genAI = new GoogleGenerativeAI(apiKey);
 
-         try {
-             const response = await axios.post(
-                 'https://api-inference.huggingface.co/models/bigcode/starcoder',
-                 {
-                     inputs: prompt,
-                     parameters: {
-                         max_new_tokens: 150,
-                         temperature: 0.2,
-                         top_p: 0.95,
-                         repetition_penalty: 1.2,
-                     },
-                 },
-                 {
-                     headers: {
-                         'Authorization': `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
-                         'Content-Type': 'application/json',
-                     },
-                 }
-             );
+// Define the route to handle AI requests
+router.post('/ask', async (req: Request, res: Response) => {
+    const { question } = req.body;
 
-             const generatedText = response.data?.[0]?.generated_text || response.data?.generated_text || "No response from model.";
-             const answer = generatedText.replace(/^AI Assistant:/i, '').trim();
-             res.json({ answer });
-         } catch (error: any) {
-             console.error("Error fetching from Hugging Face:", error.response?.data || error.message || error);
-             res.status(500).json({ error: 'Failed to get response from AI model.' });
-         }
-     });
+    if (!question) {
+        return res.status(400).json({ error: 'Question is required.' });
+    }
 
-     export default router;
+    try {
+        // Get the Gemini Pro model
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+        // Generate content
+        const result = await model.generateContent(question);
+        const response = await result.response;
+        const answer = response.text();
+
+        res.json({ answer });
+    } catch (error) {
+        console.error('Error generating response:', error);
+        res.status(500).json({ error: 'Failed to generate response from AI.' });
+    }
+});
+
+export default router;
