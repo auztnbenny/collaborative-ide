@@ -1,58 +1,75 @@
-Collaborative Online IDE with AI Assistance and QR Code-Based App Testing
-Table of Contents
-Overview
-Features
-Technologies Used
-Installation
-Usage
-Use Case Diagram
-Contributing
-License
-Acknowledgments
-Overview
-This project introduces a Collaborative Online IDE that simplifies the development of React Native applications through AI-powered code assistance and QR code-based app testing. It enables developers to work together in real-time, with a seamless environment for coding, debugging, and testing mobile applications.
+# **Collaborative Online IDE with AI Assistance and QR Code-Based App Testing**
 
-The platform offers two roles—Leader/Admin and Developer—where the Leader can manage the project and assign roles, and developers collaborate based on their permissions.
+## **Table of Contents**
+1. **[Overview](#overview)**  
+2. **[Features](#features)**  
+3. **[Technologies Used](#technologies-used)**  
+4. **[Installation](#installation)**  
 
-Features
-Real-Time Collaboration: Multiple developers can edit code simultaneously.
-AI Code Assistance: Intelligent suggestions and error detection to improve code quality.
-QR Code-Based Testing: Quickly test applications on mobile devices by scanning a QR code.
-Role-Based Access Control: Admin assigns permissions (Editor/Viewer) to developers.
-User-Friendly Interface: Modern, responsive design for an optimal development experience.
-Technologies Used
-Frontend: React.js
-Backend: Node.js, Socket.io
-AI Assistance: Integration with AI libraries
-Mobile App Testing: QR code generation and scanning
-Database: MongoDB (for storing project details and roles)
-Installation
-Clone the Repository
+---
 
-bash
-Copy code
+## **Overview**
+This project introduces a **Collaborative Online IDE** designed to simplify the development of **React Native applications** through **AI-powered code assistance** and **QR code-based app testing**. Developers can collaborate in real-time, benefiting from an environment optimized for coding, debugging, and testing mobile apps.
+
+The platform defines two primary roles:  
+- **Leader/Admin:** Manages the project and assigns roles to team members.  
+- **Developer:** Collaborates on the code with assigned permissions.  
+
+This system ensures mobile app development is efficient and dynamic with real-time feedback, AI suggestions, and seamless testing capabilities.
+
+---
+
+## **Features**
+- **Real-Time Collaboration:**  
+  Multiple developers can work on the same project simultaneously with live updates.
+
+- **AI Code Assistance:**  
+  Offers intelligent suggestions, error detection, and code improvements.
+
+- **QR Code-Based Testing:**  
+  Generate QR codes to quickly deploy and test applications on mobile devices.
+
+- **Role-Based Access Control:**  
+  Admin assigns roles (Editor or Viewer) to developers for controlled project management.
+
+- **User-Friendly Interface:**  
+  A modern, responsive interface for an optimal development experience.
+
+---
+
+## **Technologies Used**
+- **Frontend:** React.js  
+- **Backend:** Node.js, Socket.io  
+- **AI Assistance:** Integration with AI libraries  
+- **Mobile App Testing:** QR code generation and scanning  
+- **Database:** MongoDB (for project details and role assignments)
+
+---
+
+## **Installation**
+
+### **1. Clone the Repository**
+```bash
 git clone https://github.com/your-username/your-repo.git
 cd your-repo
-Install Dependencies
+ ```
+### **2. Install Dependencies**
 
-Backend:
-bash
-Copy code
+```bash
 cd backend
 npm install
 Frontend:
-bash
-Copy code
 cd frontend
 npm install
+```
 Run the Server
 
-Start backend server:
-bash
-Copy code
+### **2. Start server**
+```bash
 npm run dev
-Start frontend server:
-bash
-Copy code
-npm start dev
-Access the IDE
+```
+### **2. Start client**
+```bash
+npm run dev
+```
+
