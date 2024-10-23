@@ -50,75 +50,9 @@ Run the Server
 Start backend server:
 bash
 Copy code
-npm run start
+npm run dev
 Start frontend server:
 bash
 Copy code
-npm start
+npm start dev
 Access the IDE
-Open your browser and navigate to:
-
-arduino
-Copy code
-http://localhost:3000
-Usage
-Create a Project: Admin creates the project.
-Assign Roles: Admin assigns developer roles (Editor/Viewer).
-Join Project: Developers join the project to collaborate.
-Write Code: Both Admin and Developers write code in real-time with AI assistance.
-Generate QR Code: Admin or Developers generate a QR code to test the app on their mobile devices.
-Test Application: Scan the QR code to launch the app on a mobile device.
-Use Case Diagram
-Here’s an overview of the interactions in the system:
-
-plaintext
-Copy code
-@startuml
-left to right direction
-skinparam packageStyle rectangle
-
-actor "Leader/Admin" as leader
-actor "Developer" as developer
-actor "AI Assistant" as ai
-actor "QR Code Testing" as qr
-
-rectangle CollaborativeIDE {
-leader -- (Create Project)
-leader -- (Assign Roles)
-leader -- (Write Code)
-leader -- (Test Application)
-developer -- (Join Project)
-developer -- (Write Code)
-developer -- (Test Application)
-developer -- (View Project)
-(Write Code) .> (AI Code Assistance) : include
-(Test Application) .> (Generate QR Code for Testing) : include
-ai -- (AI Code Assistance)
-qr -- (Generate QR Code for Testing)
-}
-@enduml
-Contributing
-Contributions are welcome! Follow these steps to contribute:
-
-Fork the repository.
-Create a new branch for your feature.
-bash
-Copy code
-git checkout -b feature-name
-Commit your changes.
-bash
-Copy code
-git commit -m "Add your message here"
-Push the branch.
-bash
-Copy code
-git push origin feature-name
-Create a pull request.
-License
-This project is licensed under the MIT License. See the LICENSE file for more information.
-
-Acknowledgments
-React Native for simplifying mobile app development.
-Socket.io for real-time collaboration.
-AI Tools for enhancing the developer experience.
-Special thanks to all contributors!
