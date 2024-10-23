@@ -5,11 +5,6 @@
 2. **[Features](#features)**  
 3. **[Technologies Used](#technologies-used)**  
 4. **[Installation](#installation)**  
-5. **Usage**  
-6. **[Use Case Diagram](#use-case-diagram)**  
-7. **[Contributing](#contributing)**  
-8. **[License](#license)**  
-9. **[Acknowledgments](#acknowledgments)**
 
 ---
 
