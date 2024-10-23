@@ -83,3 +83,8 @@
 .ai-button:disabled {
     background-color: #ccc; /* Gray out the button when loading */
 }
+.ai-response {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
