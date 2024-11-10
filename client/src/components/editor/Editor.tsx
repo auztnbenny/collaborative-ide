@@ -1,23 +1,23 @@
-import { useAppContext } from "@/context/AppContext"
-import { useFileSystem } from "@/context/FileContext"
-import { useSettings } from "@/context/SettingContext"
-import { useSocket } from "@/context/SocketContext"
-import usePageEvents from "@/hooks/usePageEvents"
-import useResponsive from "@/hooks/useResponsive"
-import { editorThemes } from "@/resources/Themes"
-import { FileSystemItem } from "@/types/file"
-import { SocketEvent } from "@/types/socket"
-import { color } from "@uiw/codemirror-extensions-color"
-import { hyperLink } from "@uiw/codemirror-extensions-hyper-link"
-import { LanguageName, loadLanguage } from "@uiw/codemirror-extensions-langs"
+import { useAppContext } from '@/context/AppContext'
+import { useFileSystem } from '@/context/FileContext'
+import { useSettings } from '@/context/SettingContext'
+import { useSocket } from '@/context/SocketContext'
+import usePageEvents from '@/hooks/usePageEvents'
+import useResponsive from '@/hooks/useResponsive'
+import { editorThemes } from '@/resources/Themes'
+import { FileSystemItem } from '@/types/file'
+import { SocketEvent } from '@/types/socket'
+import { color } from '@uiw/codemirror-extensions-color'
+import { hyperLink } from '@uiw/codemirror-extensions-hyper-link'
+import { LanguageName, loadLanguage } from '@uiw/codemirror-extensions-langs'
 import CodeMirror, {
     Extension,
     ViewUpdate,
     scrollPastEnd,
-} from "@uiw/react-codemirror"
-import { useEffect, useMemo, useState } from "react"
-import toast from "react-hot-toast"
-import { cursorTooltipBaseTheme, tooltipField } from "./tooltip"
+} from '@uiw/react-codemirror'
+import { useEffect, useMemo, useState } from 'react'
+import toast from 'react-hot-toast'
+import { cursorTooltipBaseTheme, tooltipField } from './tooltip'
 
 function Editor() {
     const { users, currentUser } = useAppContext()
@@ -68,7 +68,7 @@ function Editor() {
             extensions.push(langExt)
         } else {
             toast.error(
-                "Syntax highlighting is unavailable for this language. Please adjust the editor settings; it may be listed under a different name.",
+                'Syntax highlighting is unavailable for this language. Please adjust the editor settings; it may be listed under a different name.',
                 {
                     duration: 5000,
                 },
@@ -79,21 +79,19 @@ function Editor() {
     }, [filteredUsers, language])
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-            <CodeMirror
-                theme={editorThemes[theme]}
-                onChange={onCodeChange}
-                value={activeFile?.content}
-                extensions={extensions}
-                minHeight="100%"
-                maxWidth="100vw"
-                style={{
-                    fontSize: fontSize + "px",
-                    height: viewHeight,
-                    position: "relative",
-                }}
-            />
-        </div>
+        <CodeMirror
+            theme={editorThemes[theme]}
+            onChange={onCodeChange}
+            value={activeFile?.content}
+            extensions={extensions}
+            minHeight="100%"
+            maxWidth="100vw"
+            style={{
+                fontSize: fontSize + 'px',
+                height: viewHeight,
+                position: 'relative',
+            }}
+        />
     )
 }
 
