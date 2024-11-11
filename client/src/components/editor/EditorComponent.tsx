@@ -1,8 +1,8 @@
-import { useFileSystem } from "@/context/FileContext"
-import useResponsive from "@/hooks/useResponsive"
-import cn from "classnames"
-import Editor from "./Editor"
-import FileTab from "./FileTab"
+import { useFileSystem } from '@/context/FileContext'
+import useResponsive from '@/hooks/useResponsive'
+import cn from 'classnames'
+import Editor from './Editor'
+import FileTab from './FileTab'
 
 function EditorComponent() {
     const { openFiles } = useFileSystem()
@@ -20,9 +20,9 @@ function EditorComponent() {
 
     return (
         <main
-            className={cn("flex w-full flex-col overflow-x-auto md:h-screen", {
-                "h-[calc(100vh-50px)]": !minHeightReached,
-                "h-full": minHeightReached,
+            className={cn('flex w-full flex-col overflow-x-auto md:h-screen', {
+                'h-[calc(100vh-50px)]': !minHeightReached,
+                'h-full': minHeightReached,
             })}
         >
             <FileTab />
