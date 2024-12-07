@@ -135,7 +135,7 @@ function Directory({
         e.stopPropagation()
         setMenuOpen(false)
         const isConfirmed = confirm(
-            `Are you sure you want to delete directory?`,
+            "Are you sure you want to delete directory?",
         )
         if (isConfirmed) {
             deleteDirectory(id)
@@ -265,7 +265,7 @@ const File = ({
     const handleDeleteFile = (e: MouseEvent, id: Id) => {
         e.stopPropagation()
         setMenuOpen(false)
-        const isConfirmed = confirm(`Are you sure you want to delete file?`)
+        const isConfirmed = confirm("Are you sure you want to delete file?")
         if (isConfirmed) {
             deleteFile(id)
         }

@@ -4,6 +4,7 @@ export enum USER_CONNECTION_STATUS {
 }
 
 export interface User {
+    currentDir(currentDir: any, targetDir: any): unknown;
     username: string;
     roomId: string;
     status: USER_CONNECTION_STATUS;

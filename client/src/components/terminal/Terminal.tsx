@@ -1,60 +1,111 @@
-// client/src/components/terminal/Terminal.tsx
-import React, { useEffect, useRef } from 'react';
-import { Terminal } from 'xterm';
-import { FitAddon } from 'xterm-addon-fit';
-import 'xterm/css/xterm.css';
-import axios from 'axios';
+import { useEffect, useRef } from "react";
+import { Terminal } from "xterm";
+import { FitAddon } from "@xterm/addon-fit";
+import io from "socket.io-client";
 
-const TerminalComponent: React.FC = () => {
-    const terminalRef = useRef<HTMLDivElement | null>(null);
+// Socket.io connection to backend
+const socket = io("http://localhost:3000"); // Replace with your backend URL
 
-    useEffect(() => {
-        const term = new Terminal();
-        const fitAddon = new FitAddon();
-        term.loadAddon(fitAddon);
-        term.open(terminalRef.current!);
-        fitAddon.fit();
+const TerminalComponent = () => {
+  const terminalRef = useRef<HTMLDivElement | null>(null);
+  const terminalInstance = useRef<Terminal | null>(null);
+  const fitAddonInstance = useRef<FitAddon | null>(null);
 
-        const socket = new WebSocket('ws://localhost:3000'); // Adjust this URL as needed
+  useEffect(() => {
+    if (terminalRef.current) {
+      const term = new Terminal({
+        rows: 20,
+        cursorBlink: true,
+        theme: {
+          background: "#1e1e1e",
+          foreground: "#ffffff",
+          cursor: "#ffffff",
+          cursorAccent: "#000000",
+        },
+        fontSize: 14,
+        fontFamily: "Menlo, Monaco, 'Courier New', monospace",
+        scrollback: 1000, // Increase scrollback buffer
+      });
 
-        socket.onmessage = (event) => {
-            term.write(event.data);
-        };
+      const fitAddon = new FitAddon();
+      term.loadAddon(fitAddon);
 
-        term.onData(async (data) => {
-            // Send command to the server
-            const command = data.trim();
-            if (command) {
-                try {
-                    const response = await axios.post('http://localhost:3000/api/terminal/execute', { command });
-                    term.write(response.data.output);
-                } catch (error:any) {
-                    term.write(`Error: ${error.response?.data?.error || 'Unknown error'}\n`);
-                }
-            }
-        });
+      terminalInstance.current = term;
+      fitAddonInstance.current = fitAddon;
 
-        socket.onerror = (error) => {
-            console.error('WebSocket error:', error);
-        };
+      term.open(terminalRef.current);
+      fitAddon.fit();
+      term.focus();
 
-        socket.onclose = () => {
-            console.log('WebSocket connection closed');
-        };
+      term.writeln("\x1b[1;32mWelcome to the Terminal\x1b[0m");
 
-        return () => {
-            socket.close();
-            term.dispose();
-        };
-    }, []);
+      // Listen for terminal input commands
+      const prompt = () => term.write("\r\n$ ");
+      prompt();
 
-    return (
-        <div
-            className="terminal-container"
-            ref={terminalRef}
-            style={{ height: '300px', width: '100%' }}
-        ></div>
-    );
+      term.onKey(({ key, domEvent }) => {
+        const printable = !domEvent.altKey && !domEvent.ctrlKey && !domEvent.metaKey;
+
+        if (domEvent.key === "Enter") {
+          // Get the full line input from the terminal's active buffer
+          const currentLine = term.buffer.active.getLine(term.buffer.active.cursorY);
+          const lineText = currentLine ? currentLine.translateToString() : ""; // Get the current line text
+
+          // Remove the prompt symbol "$ " from the beginning of the command
+          const command = lineText.startsWith("$ ") ? lineText.substring(2).trim() : lineText.trim();
+
+          // Send terminal command prefixed with "terminal:" to backend
+          socket.emit("message", `terminal: ${command}`); // Send full line of input without prompt symbol
+          prompt(); // Display the prompt after sending the command
+        } else if (domEvent.key === "Backspace") {
+          term.write("\b \b"); // Handle backspace
+        } else if (printable) {
+          term.write(key); // Handle printable characters
+        }
+      });
+
+      // Handle terminal output from the backend
+      socket.on("terminalOutput", (output: string) => {
+        term.writeln(output); // Output from backend
+        prompt(); // After output is displayed, show prompt again
+        term.scrollToBottom(); // Ensure terminal scrolls to the bottom after output
+      });
+
+      // Handle errors in AI responses (optional)
+      socket.on("CHATBOT_ERROR", (errorMessage: string) => {
+        term.writeln(`\x1b[1;31m${errorMessage}\x1b[0m`); // Show error in red
+        prompt();
+      });
+    }
+
+    return () => {
+      terminalInstance.current?.dispose();
+    };
+  }, []);
+
+  // Fit terminal on window resize
+  useEffect(() => {
+    const handleResize = () => fitAddonInstance.current?.fit();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return (
+    <div
+      ref={terminalRef}
+      style={{
+        width: "100%",
+        height: "100%",
+        minHeight: "200px",
+        padding: "8px",
+        backgroundColor: "#1e1e1e",
+        position: "relative",
+        overflow: "hidden",
+        overflowY: "auto", // Ensure vertical scrolling if terminal content exceeds
+      }}
+      tabIndex={0} // Ensure terminal can receive focus
+    />
+  );
 };
 
 export default TerminalComponent;

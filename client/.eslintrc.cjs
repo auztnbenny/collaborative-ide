@@ -5,6 +5,7 @@ module.exports = {
     env: {
         browser: true,
         es2021: true,
+        node:true
     },
     extends: [
         "eslint:recommended",
@@ -20,7 +21,7 @@ module.exports = {
     plugins: ["@typescript-eslint"], // Removed "react-refresh"
     rules: {
         "no-unused-vars": "warn",
-        "quotes": ["error", "single"],
+        "quotes": ["error", "double"],
         // Removed "react-refresh/only-export-components" rule
     },
 };

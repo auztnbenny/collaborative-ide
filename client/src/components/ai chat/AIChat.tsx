@@ -66,7 +66,7 @@ const AIAssistant = () => {
                     )
                 }
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Error asking AI:", error)
             toast.error("An error occurred while asking the AI.")
         } finally {

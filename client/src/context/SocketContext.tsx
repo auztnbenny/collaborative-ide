@@ -47,7 +47,7 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
     )
 
     const handleError = useCallback(
-        (err: any) => {
+        (err: unknown) => {
             console.log("socket error", err)
             setStatus(USER_STATUS.CONNECTION_FAILED)
             toast.dismiss()
