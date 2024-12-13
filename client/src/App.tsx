@@ -1,24 +1,67 @@
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-// import GitHubCorner from "./components/GitHubCorner"
-import Toast from "./components/toast/Toast";
-import EditorPage from "./pages/EditorPage";
+import React from "react";
+import {
+  ClerkProvider,
+  RedirectToSignIn,
+  SignedIn,
+} from "@clerk/clerk-react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import IntroPage from "./pages/intropage";
+import SignInPage from "./pages/SignIn";
+import DashboardPage from "./pages/DashboardPage";
 import HomePage from "./pages/HomePage";
-import IntroPage from "./pages/intropage"; // Import the new page
+import EditorPage from "./pages/EditorPage";
+import Toast from "./components/toast/Toast";
 
-const App = () => {
-    return (
-        <>
-            <Router>
-                <Routes>
-                    <Route path="/" element={<IntroPage />} /> {/* Intro page */}
-                    <Route path="/home" element={<HomePage />} /> {/* Updated HomePage route */}
-                    <Route path="/editor/:roomId" element={<EditorPage />} />
-                </Routes>
-            </Router>
-            <Toast /> {/* Toast component from react-hot-toast */}
-            {/* <GitHubCorner /> */}
-        </>
-    );
+const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
+if (!publishableKey) {
+  throw new Error("Missing VITE_CLERK_PUBLISHABLE_KEY in environment variables.");
+}
+
+const App: React.FC = () => {
+  return (
+    <ClerkProvider publishableKey={publishableKey}>
+      <Router>
+        <Routes>
+          {/* Public Route */}
+          <Route path="/" element={<IntroPage />} />
+
+          {/* Authentication Routes */}
+          <Route path="/sign-in" element={<SignInPage />} />
+
+          {/* Protected Routes */}
+          <Route
+            path="/dashboard"
+            element={
+              <SignedIn>
+                <DashboardPage />
+              </SignedIn>
+            }
+          />
+          <Route
+            path="/home"
+            element={
+              <SignedIn>
+                <HomePage />
+              </SignedIn>
+            }
+          />
+          <Route
+            path="/editor/:roomId"
+            element={
+              <SignedIn>
+                <EditorPage />
+              </SignedIn>
+            }
+          />
+
+          {/* Redirect all other routes to Sign-In */}
+          <Route path="*" element={<RedirectToSignIn />} />
+        </Routes>
+      </Router>
+      <Toast />
+    </ClerkProvider>
+  );
 };
 
 export default App;
