@@ -1,3 +1,4 @@
+//client\src\pages\DashboardPage.tsx
 import React from "react";
 import {
   ClerkProvider,

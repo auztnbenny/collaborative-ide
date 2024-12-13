@@ -1,3 +1,4 @@
+//client\src\pages\DashboardPage.tsx
 import { useUser, useClerk } from "@clerk/clerk-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
