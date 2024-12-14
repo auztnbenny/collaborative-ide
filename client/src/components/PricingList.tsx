@@ -50,6 +50,6 @@ const PricingList = () => {
       ))}
     </div>
   );
-};
+ };
 
 export default PricingList;

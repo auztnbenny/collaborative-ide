@@ -25,12 +25,7 @@ const IntroPage: React.FC = () => {
         {/* Collaboration Section */}
         <Collaboration />
 
-        {/* Services Section */}
-        <Services />
-
-        {/* Pricing Section */}
-        <Pricing />
-
+        
         {/* Roadmap Section */}
         <Roadmap />
 
