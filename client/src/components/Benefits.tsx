@@ -17,9 +17,9 @@ const Benefits = () => {
       <div className="container relative z-2">
         <Heading
           className="md:max-w-md lg:max-w-2xl"
-          title="Chat Smarter, Not Harder with Brainwave"
-          text="A powerful tool to enhance communication with cutting-edge AI."
-          tag="h2"
+          title="Code Smarter, Not Harder with Collabflo"
+          text="A revolutionary IDE to transform coding with advanced AI assistance."
+          tag=""
         />
 
         <div className="flex flex-wrap gap-10 mb-10">
