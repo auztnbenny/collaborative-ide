@@ -1,29 +1,38 @@
-//client\src\pages\SignIn.tsx
 import React, { useEffect } from "react";
 import { SignIn as ClerkSignIn, useUser } from "@clerk/clerk-react";
 import axios from "axios";
 
 const SignInPage = () => {
-  const { user } = useUser(); // Clerk hook to access authenticated user data
+  const { user } = useUser();
 
   const saveUserData = async () => {
     if (user) {
       try {
-        const email = user.emailAddresses[0]?.emailAddress || "No email provided";
+        const email = user.emailAddresses[0]?.emailAddress || "";
         const userData = {
           clerkId: user.id,
           email,
-          username: user.username || "No username",
-          firstName: user.firstName || "No firstName",
-          lastName: user.lastName || "No lastName"
-      
+          username: user.username || null,
+          firstName: user.firstName || null,
+          lastName: user.lastName || null,
         };
 
+        console.log("Sending user data:", userData);
+
         // POST request to backend
-        const response = await axios.post("http://localhost:3000/api/saveUser", userData);
-        console.log(response.data.message);
+        const response = await axios.post("http://localhost:3000/api/user/saveUser", userData, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        console.log("Server response:", response.data);
       } catch (error) {
-        console.error("Error saving user data:", error);
+        if (axios.isAxiosError(error)) {
+          console.error("Axios error:", error.response?.data || error.message);
+        } else {
+          console.error("Unexpected error:", error);
+        }
       }
     }
   };
