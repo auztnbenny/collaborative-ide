@@ -60,7 +60,7 @@ const SignInPage = () => {
             },
             layout: { socialButtonsPlacement: "top" },
           }}
-        />
+        /> 
       </div>
     </div>
   );

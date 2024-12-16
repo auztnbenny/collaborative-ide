@@ -46,7 +46,7 @@ app.get('/test', (req, res) => {
 const userRoutes = require('./routes/userRoutes');
 app.use('/api', userRoutes);
 
-const PORT = process.env.PORT || 3000; // Use port 3001 to avoid conflicts
+const PORT = process.env.PORTM || 3001; // Use port 3001 to avoid conflicts
 const server = app.listen(PORT, () => {
   console.log(`✓ Server running on http://localhost:${PORT}`);
 });

@@ -1,12 +1,12 @@
-import { useFileSystem } from '@/context/FileContext'
-import { getIconClassName } from '@/utils/getIconClassName'
-import { Icon } from '@iconify/react'
-import { IoClose } from 'react-icons/io5'
-import cn from 'classnames'
-import { useEffect, useRef } from 'react'
-import customMapping from '@/utils/customMapping'
-import { useSettings } from '@/context/SettingContext'
-import langMap from 'lang-map'
+import { useFileSystem } from "@/context/FileContext"
+import { getIconClassName } from "@/utils/getIconClassName"
+import { Icon } from "@iconify/react"
+import { IoClose } from "react-icons/io5"
+import cn from "classnames"
+import { useEffect, useRef } from "react"
+import customMapping from "@/utils/customMapping"
+import { useSettings } from "@/context/SettingContext"
+import langMap from "lang-map"
 
 function FileTab() {
     const {
@@ -23,7 +23,7 @@ function FileTab() {
         // If the file is already active, do nothing
         if (activeFile?.id === fileId) return
 
-        updateFileContent(activeFile?.id || '', activeFile?.content || '')
+        updateFileContent(activeFile?.id || "", activeFile?.content || "")
 
         const file = openFiles.find((file) => file.id === fileId)
         if (file) {
@@ -43,10 +43,10 @@ function FileTab() {
             }
         }
 
-        fileTabNode.addEventListener('wheel', handleWheel)
+        fileTabNode.addEventListener("wheel", handleWheel)
 
         return () => {
-            fileTabNode.removeEventListener('wheel', handleWheel)
+            fileTabNode.removeEventListener("wheel", handleWheel)
         }
     }, [])
 
@@ -54,7 +54,7 @@ function FileTab() {
     useEffect(() => {
         if (activeFile?.name === undefined) return
         // Get file extension on file open and set language when file is opened
-        const extension = activeFile.name.split('.').pop()
+        const extension = activeFile.name.split(".").pop()
         if (!extension) return
 
         // Check if custom mapping exists
@@ -76,8 +76,8 @@ function FileTab() {
                 <span
                     key={file.id}
                     className={cn(
-                        'flex w-fit cursor-pointer items-center rounded-t-md px-2 py-1 text-white',
-                        { 'bg-darkHover': file.id === activeFile?.id },
+                        "flex w-fit cursor-pointer items-center rounded-t-md px-2 py-1 text-white",
+                        { "bg-darkHover": file.id === activeFile?.id },
                     )}
                     onClick={() => changeActiveFile(file.id)}
                 >
