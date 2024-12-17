@@ -16,4 +16,4 @@ interface ChatContext {
     setLastScrollHeight: (lastScrollHeight: number) => void
 }
 
-export { ChatContext, ChatMessage }
+export type { ChatContext, ChatMessage }

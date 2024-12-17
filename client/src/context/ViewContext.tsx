@@ -9,6 +9,8 @@ import { ReactNode, createContext, useContext, useState } from "react"
 import { IoSettingsOutline } from "react-icons/io5"
 import { LuFiles } from "react-icons/lu"
 import { PiChats, PiPlay, PiUsers } from "react-icons/pi"
+import { BsRobot } from "react-icons/bs" // Added for AI Chat icon
+import AIChat from "@/components/ai chat/AIChat" // Ensure correct path
 
 const ViewContext = createContext<ViewContextType | null>(null)
 
@@ -24,19 +26,24 @@ function ViewContextProvider({ children }: { children: ReactNode }) {
     const { isMobile } = useWindowDimensions()
     const [activeView, setActiveView] = useState<VIEWS>(VIEWS.FILES)
     const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(!isMobile)
+
+    // Updated to include AI Chat
     const [viewComponents] = useState({
         [VIEWS.FILES]: <FilesView />,
         [VIEWS.CLIENTS]: <UsersView />,
         [VIEWS.SETTINGS]: <SettingsView />,
         [VIEWS.CHATS]: <ChatsView />,
         [VIEWS.RUN]: <RunView />,
+        [VIEWS.AI_CHAT]: <AIChat />, // Added AI Chat component
     })
+
     const [viewIcons] = useState({
         [VIEWS.FILES]: <LuFiles size={28} />,
         [VIEWS.CLIENTS]: <PiUsers size={30} />,
         [VIEWS.SETTINGS]: <IoSettingsOutline size={28} />,
         [VIEWS.CHATS]: <PiChats size={30} />,
         [VIEWS.RUN]: <PiPlay size={28} />,
+        [VIEWS.AI_CHAT]: <BsRobot size={30} />, // Added AI Chat icon
     })
 
     return (

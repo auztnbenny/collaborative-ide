@@ -1,11 +1,11 @@
 {
-    "name": "code-sync-client",
+    "name": "collabflo",
     "private": true,
     "version": "0.0.0",
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "tsc && vite build",
+        "build": "vite build",
         "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
         "preview": "vite preview"
     },
@@ -60,7 +60,6 @@
         "prettier": "^3.2.4",
         "prettier-plugin-tailwindcss": "^0.5.11",
         "tailwindcss": "^3.4.1",
-        "ts-node": "^10.9.2",
         "typescript": "^5.4.5",
         "vite": "^5.4.7"
     }

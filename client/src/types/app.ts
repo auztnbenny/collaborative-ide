@@ -24,4 +24,4 @@ interface AppContext {
 }
 
 export { ACTIVITY_STATE }
-export { AppContext, DrawingData }
+export type { AppContext, DrawingData }

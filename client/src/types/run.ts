@@ -14,4 +14,4 @@ interface RunContext {
     runCode: () => void
 }
 
-export { Language, RunContext }
+export type { Language, RunContext }

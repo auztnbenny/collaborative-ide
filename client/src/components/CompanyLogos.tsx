@@ -1,5 +1,5 @@
 import React from "react";
-import { companyLogos } from "../constants";
+
 
 interface CompanyLogosProps {
   className?: string; // Optional string for custom CSS classes

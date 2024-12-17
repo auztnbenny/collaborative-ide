@@ -6,4 +6,4 @@ interface FileTabContext {
     changeActiveFile: (fileId: string) => void
 }
 
-export { FileTabContext }
+export type { FileTabContext }

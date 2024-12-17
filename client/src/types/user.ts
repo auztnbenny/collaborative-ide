@@ -25,4 +25,5 @@ enum USER_STATUS {
     DISCONNECTED = "disconnected",
 }
 
-export { USER_CONNECTION_STATUS, USER_STATUS, RemoteUser, User }
+export { USER_CONNECTION_STATUS, USER_STATUS }
+export type { RemoteUser, User }

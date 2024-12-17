@@ -31,4 +31,4 @@ interface FileContext {
     downloadFilesAndFolders: () => void
 }
 
-export { FileSystemItem, FileContent, FileContext, Id, FileName }
+export type { FileSystemItem, FileContent, FileContext, Id, FileName }

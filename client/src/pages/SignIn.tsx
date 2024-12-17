@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { SignIn as ClerkSignIn, useUser } from "@clerk/clerk-react";
 import axios from "axios";
 
