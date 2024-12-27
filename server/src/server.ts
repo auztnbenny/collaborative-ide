@@ -19,7 +19,10 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: ['https://collaborative-ide-iota.vercel.app/'], // Add all your client URLs
+  origin: [
+    'https://collaborative-ide-iota.vercel.app',
+    'https://collaborative-ide-ynie.onrender.com'
+  ], // Add all your client URLs
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
