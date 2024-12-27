@@ -4,7 +4,7 @@ import { FitAddon } from "@xterm/addon-fit";
 import io from "socket.io-client";
 
 // Socket.io connection to backend
-const socket = io("http://localhost:3000"); // Replace with your backend URL
+const socket = io("https://collaborative-ide-ynie.onrender.com"); // Replace with your backend URL
 
 const TerminalComponent = () => {
   const terminalRef = useRef<HTMLDivElement | null>(null);

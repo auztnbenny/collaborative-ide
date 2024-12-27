@@ -49,7 +49,7 @@ const AIAssistant = () => {
                 setMessages((prev) => [...prev, aiAnswer])
             } else {
                 const response = await axios.post(
-                    "http://localhost:3000/api/ai/ask",
+                    "https://collaborative-ide-ynie.onrender.com/api/ai/ask",
                     { question },
                 )
 

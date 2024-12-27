@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:3000'; // Replace with your actual server URL
+const API_BASE_URL = 'https://collaborative-ide-ynie.onrender.com'; // Replace with your actual server URL
 
 const getAIResponse = async (userMessage: string): Promise<string> => {
     try {
