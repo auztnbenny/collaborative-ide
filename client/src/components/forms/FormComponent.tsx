@@ -6,7 +6,6 @@ import { ChangeEvent, FormEvent, useEffect, useRef } from "react"
 import { toast } from "react-hot-toast"
 import { useLocation, useNavigate } from "react-router-dom"
 import { v4 as uuidv4 } from "uuid"
-import logo from "@/assets/collabflo-removebg-preview.png"
 
 const FormComponent = () => {
     const location = useLocation()
@@ -36,7 +35,7 @@ const FormComponent = () => {
             toast.error("Enter a room id")
             return false
         } else if (currentUser.roomId.length < 5) {
-            toast.error("ROOM Id must be at least 5 characters long")
+            toast.error("Room Id must be at least 5 characters long")
             return false
         } else if (currentUser.username.length < 3) {
             toast.error("Username must be at least 3 characters long")
@@ -75,7 +74,7 @@ const FormComponent = () => {
         if (status === USER_STATUS.JOINED && !isRedirect) {
             const username = currentUser.username
             sessionStorage.setItem("redirect", "true")
-            navigate(`/editor/${currentUser.roomId}`, {
+            navigate('/editor/${currentUser.roomId}', {
                 state: {
                     username,
                 },
@@ -94,16 +93,14 @@ const FormComponent = () => {
         socket,
         status,
     ])
-
     return (
-        <div className="flex w-full max-w-[500px] flex-col items-center justify-center gap-4 p-4 sm:w-[500px] sm:p-8">
-            <img src={logo} alt="Logo" className="w-full" />
-            <form onSubmit={joinRoom} className="flex w-full flex-col gap-4">
+        <div className="flex w-full max-w-[400px] flex-col gap-4">
+            <form onSubmit={joinRoom} className="flex flex-col gap-4">
                 <input
                     type="text"
                     name="roomId"
                     placeholder="Room Id"
-                    className="w-full rounded-md border border-gray-500 bg-darkHover px-3 py-3 focus:outline-none"
+                    className="rounded-md border border-gray-300 px-3 py-2 focus:outline-primary"
                     onChange={handleInputChanges}
                     value={currentUser.roomId}
                 />
@@ -111,20 +108,20 @@ const FormComponent = () => {
                     type="text"
                     name="username"
                     placeholder="Username"
-                    className="w-full rounded-md border border-gray-500 bg-darkHover px-3 py-3 focus:outline-none"
+                    className="rounded-md border border-gray-300 px-3 py-2 focus:outline-primary"
                     onChange={handleInputChanges}
                     value={currentUser.username}
                     ref={usernameRef}
                 />
                 <button
                     type="submit"
-                    className="mt-2 w-full rounded-md bg-primary px-8 py-3 text-lg font-semibold text-black"
+                    className="rounded-md bg-primary px-4 py-2 font-semibold text-white hover:bg-primary-dark"
                 >
                     Join
                 </button>
             </form>
             <button
-                className="cursor-pointer select-none underline"
+                className="text-sm text-blue-600 underline hover:text-blue-800"
                 onClick={createNewRoomId}
             >
                 Generate Unique Room Id
