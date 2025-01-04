@@ -32,7 +32,7 @@ router.post("/saveUser", async (req: Request, res: Response) => {
       clerkId,
       email,
       username: username || null,
-      firstName: firstName || null,
+      firstName: firstName ||  null,
       lastName: lastName || null
     });
 

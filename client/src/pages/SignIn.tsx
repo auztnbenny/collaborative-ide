@@ -20,7 +20,11 @@ const SignInPage = () => {
         console.log("Sending user data:", userData);
 
         // POST request to backend
-        const response = await axios.post("https://collaborative-ide-ynie.onrender.com/api/user/saveUser", userData, {
+        const backendUrl = process.env.NODE_ENV === 'development' 
+          ? "http://localhost:3000/api/user/saveUser" 
+          : "https://collaborative-ide-ynie.onrender.com/api/user/saveUser";
+
+        const response = await axios.post(backendUrl, userData, {
           headers: {
             "Content-Type": "application/json",
           },

@@ -10,43 +10,47 @@ import { Server } from "socket.io";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import aiRoutes from './routes/ai';
 import lintRoutes from './routes/lint';
-import { exec } from "child_process"; // Import exec for terminal commands
+import { exec } from "child_process";
 import userRoutes from "./routes/userRoutes";
 
 dotenv.config();
 
 const app = express();
 
-// Middleware
-app.use(cors({
-  origin: [
-    'https://collaborative-ide-iota.vercel.app',
-    'https://collaborative-ide-ynie.onrender.com'
-  ], // Add all your client URLs
+const allowedOrigins = [
+  'https://collaborative-ide-ynie.onrender.com',
+  'http://localhost:5173',
+  'http://localhost:3000'
+];
+
+const options: cors.CorsOptions = {
+  origin: allowedOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
 
+app.use(cors(options));
 app.use(express.json());
-app.use(cors());
-app.use('/api/lint', lintRoutes); // Use the linting routes
-app.use('/api/ai', aiRoutes); // Use the AI routes
-app.use('/api/user', userRoutes);
-app.use(express.static(path.join(__dirname, "public")));
-
-
-// Routes
-app.use('/api/user', userRoutes);
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGO_URI!)
-  .then(() => {
-    console.log("\u2713 MongoDB connected successfully");
-  })
-  .catch((err) => {
-    console.error("\u2717 MongoDB connection error:", err);
-    process.exit(1);
-  });
+const mongoUri: string | undefined = process.env.MONGO_URI;
+
+if (!mongoUri) {
+  throw new Error('MONGO_URI is not defined in the environment variables');
+}
+
+mongoose.connect(mongoUri, {
+  serverSelectionTimeoutMS: 30000, // Increase timeout to 30 seconds
+  socketTimeoutMS: 45000, // Increase socket timeout to 45 seconds
+} as mongoose.ConnectOptions)
+.then(() => console.log('MongoDB connected'))
+.catch((err) => console.error('MongoDB connection error:', err));
+
+// Your existing routes and middleware
+app.use('/api/lint', lintRoutes);
+app.use('/api/ai', aiRoutes);
+app.use('/api/user', userRoutes);
+app.use(express.static(path.join(__dirname, "public")));
 
 // Global error handler
 app.use((err: Error, req: Request, res: Response, next: express.NextFunction) => {
@@ -91,11 +95,11 @@ io.on("connection", (socket) => {
   console.log("New connection:", socket.id);
 
   socket.on(SocketEvent.JOIN_REQUEST, ({ roomId, username }) => {
-    console.log(`Debug: User join request for room ${roomId} with username ${username}`);
+    console.log('Debug: User join request for room ${roomId} with username ${username}');
     
     const isUsernameExist = getUsersInRoom(roomId).some((u) => u.username === username);
     if (isUsernameExist) {
-      console.log(`Debug: Username ${username} already exists in room ${roomId}`);
+      console.log('Debug: Username ${username} already exists in room ${roomId}');
       io.to(socket.id).emit(SocketEvent.USERNAME_EXISTS);
       return;
     }
@@ -109,26 +113,19 @@ io.on("connection", (socket) => {
       socketId: socket.id,
       currentFile: null,
       currentDir: (currentDir: any, targetDir: any) => {
-        return `Changed directory from ${currentDir} to ${targetDir}`;
+        return 'Changed directory from ${currentDir} to ${targetDir}';
       },
     };
 
-    console.log("Debug: User data to be added:", user);
     userSocketMap.push(user);
     socket.join(roomId);
     socket.broadcast.to(roomId).emit(SocketEvent.USER_JOINED, { user });
     const users = getUsersInRoom(roomId);
     io.to(socket.id).emit(SocketEvent.JOIN_ACCEPTED, { user, users });
     socket.emit(SocketEvent.ROOM_JOINED);
-
-    console.log("Debug: Saving user to DB...");
-    try {
-      console.log("Debug: User data saved successfully!");
-    } catch (error) {
-      console.error("\u2717 Error saving user data to DB:", error);
-    }
   });
 
+  // File system events
   socket.on(SocketEvent.DIRECTORY_CREATED, ({ parentDirId, newDirectory }) => {
     const roomId = getRoomId(socket.id);
     if (!roomId) return;
@@ -268,6 +265,7 @@ io.on("connection", (socket) => {
     socket.broadcast.to(roomId).emit(SocketEvent.DRAWING_UPDATE, { snapshot });
   });
 
+  // Existing events from first file
   socket.on("disconnecting", () => {
     const user = getUserBySocketId(socket.id);
     if (!user) return;
@@ -275,7 +273,7 @@ io.on("connection", (socket) => {
     userSocketMap = userSocketMap.filter((u) => u.socketId !== socket.id);
     socket.leave(user.roomId);
 
-    console.log(`Debug: User ${user.username} disconnected from room ${user.roomId}`);
+    console.log('Debug: User ${user.username} disconnected from room ${user.roomId}');
 
     try {
       console.log("Debug: User data removed from DB successfully!");
@@ -294,7 +292,7 @@ io.on("connection", (socket) => {
 
     try {
       const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-      const prompt = `You are a helpful assistant that generates code based on user requests. Always wrap your code in triple backticks. User request: ${message}`;
+      const prompt = 'You are a helpful assistant that generates code based on user requests. Always wrap your code in triple backticks. User request: ${message}';
       const result = await model.generateContent(prompt);
       const response = await result.response;
       const generatedContent = response.text();
@@ -311,15 +309,15 @@ io.on("connection", (socket) => {
       const command = message.slice(9).trim();
       const allowedCommands = ["ls", "pwd", "cat", "echo", "clear"];
       const commandName = command.split(" ")[0];
-      console.log(`Debug: Terminal command received: ${commandName}`);
+      console.log('Debug: Terminal command received: ${commandName}');
       if (!allowedCommands.includes(commandName)) {
-        socket.emit("terminalOutput", `Error: Command "${commandName}" is not allowed.`);
+        socket.emit("terminalOutput", 'Error: Command "${commandName}" is not allowed.');
         return;
       }
       exec(command, (error, stdout, stderr) => {
         if (error) {
           console.error("\u2717 Error executing terminal command:", error);
-          socket.emit("terminalOutput", `Error executing command: ${stderr}`);
+          socket.emit("terminalOutput", 'Error executing command: ${stderr}');
           return;
         }
         console.log("Debug: Terminal command output:", stdout);
@@ -333,5 +331,5 @@ io.on("connection", (socket) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`\u2713 Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

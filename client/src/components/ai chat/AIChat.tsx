@@ -48,10 +48,12 @@ const AIAssistant = () => {
                 }
                 setMessages((prev) => [...prev, aiAnswer])
             } else {
-                const response = await axios.post(
-                    "https://collaborative-ide-ynie.onrender.com/api/ai/ask",
-                    { question },
-                )
+                const backendUrl =
+                    process.env.NODE_ENV === "production"
+                        ? "https://collaborative-ide-ynie.onrender.com/api/ai/ask"
+                        : "http://localhost:3000/api/ai/ask"
+
+                const response = await axios.post(backendUrl, { question })
 
                 if (response.status === 200) {
                     const aiAnswer: Message = {
