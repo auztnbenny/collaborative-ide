@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Determine the API base URL based on the environment
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
+const API_BASE_URL = process.env.NODE_ENV === "production"
     ? 'https://collaborative-ide-ynie.onrender.com' 
     : 'http://localhost:3000';
 

@@ -18,9 +18,8 @@ dotenv.config();
 const app = express();
 
 const allowedOrigins = [
-  'https://collaborative-ide-ynie.onrender.com',
-  'http://localhost:5173',
-  'http://localhost:3000'
+  'https://collaborative-ide-iota.vercel.app/',
+  'http://localhost:5173'
 ];
 
 const options: cors.CorsOptions = {

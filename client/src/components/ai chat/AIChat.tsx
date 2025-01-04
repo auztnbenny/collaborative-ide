@@ -48,8 +48,7 @@ const AIAssistant = () => {
                 }
                 setMessages((prev) => [...prev, aiAnswer])
             } else {
-                const backendUrl =
-                    process.env.NODE_ENV === "production"
+                const backendUrl =process.env.NODE_ENV === "production"
                         ? "https://collaborative-ide-ynie.onrender.com/api/ai/ask"
                         : "http://localhost:3000/api/ai/ask"
 
