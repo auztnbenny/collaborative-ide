@@ -19,7 +19,8 @@ const app = express();
 
 const allowedOrigins = [
   'https://collaborative-ide-iota.vercel.app/',
-  'http://localhost:5173'
+  'http://localhost:5173',
+  'https://collaborative-ide-ynie.onrender.com' // Add this line
 ];
 
 const options: cors.CorsOptions = {
