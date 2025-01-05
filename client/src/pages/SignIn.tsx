@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { SignIn as ClerkSignIn, useUser } from "@clerk/clerk-react";
 import axios from "axios";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const SignInPage = () => {
   const { user } = useUser();
 
@@ -20,11 +22,7 @@ const SignInPage = () => {
         console.log("Sending user data:", userData);
 
         // POST request to backend
-        const backendUrl = process.env.NODE_ENV === 'development' 
-          ? "http://localhost:3000/api/user/saveUser" 
-          : "https://collaborative-ide-ynie.onrender.com/api/user/saveUser";
-
-        const response = await axios.post(backendUrl, userData, {
+        const response = await axios.post(`${BACKEND_URL}/api/user/saveUser`, userData, {
           headers: {
             "Content-Type": "application/json",
           },

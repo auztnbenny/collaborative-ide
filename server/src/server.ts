@@ -18,19 +18,12 @@ dotenv.config();
 
 const app = express();
 
-const allowedOrigins = [
-  'https://collaborative-ide-iota.vercel.app',
-  'http://localhost:5173',
-  'https://collaborative-ide-ynie.onrender.com' // Add this line
-];
-
-const options: cors.CorsOptions = {
-  origin: allowedOrigins,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+const corsOptions = {
+  origin: process.env.FRONTEND_URL, // Use the URL from .env file
+  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 };
 
-app.use(cors(options));
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // MongoDB Connection
@@ -109,11 +102,11 @@ io.on("connection", (socket) => {
   console.log("New connection:", socket.id);
 
   socket.on(SocketEvent.JOIN_REQUEST, ({ roomId, username }) => {
-    console.log('Debug: User join request for room ${roomId} with username ${username}');
+    console.log(`Debug: User join request for room ${roomId} with username ${username}`);
     
     const isUsernameExist = getUsersInRoom(roomId).some((u) => u.username === username);
     if (isUsernameExist) {
-      console.log('Debug: Username ${username} already exists in room ${roomId}');
+      console.log(`Debug: Username ${username} already exists in room ${roomId}`);
       io.to(socket.id).emit(SocketEvent.USERNAME_EXISTS);
       return;
     }
@@ -340,6 +333,10 @@ io.on("connection", (socket) => {
     } else {
       socket.emit(SocketEvent.CHATBOT_MESSAGE, message);
     }
+  });
+
+  socket.on("error", (err) => {
+    console.error("Socket error:", err);
   });
 });
 

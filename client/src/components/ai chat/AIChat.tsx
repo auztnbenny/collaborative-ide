@@ -6,6 +6,8 @@ import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism"
 import analyzeCode from "@/utils/analyzeCode"
 import "./Chatbot.css" // Ensure this path is correct
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
+
 interface Message {
     sender: "user" | "ai"
     content: string
@@ -32,6 +34,11 @@ const AIAssistant = () => {
             return
         }
 
+        if (!BACKEND_URL) {
+            toast.error("Backend URL is not defined.")
+            return
+        }
+
         const newMessage: Message = { sender: "user", content: question }
         setMessages((prev) => [...prev, newMessage])
         setInput("")
@@ -48,11 +55,7 @@ const AIAssistant = () => {
                 }
                 setMessages((prev) => [...prev, aiAnswer])
             } else {
-                const backendUrl =process.env.NODE_ENV === "production"
-                        ? "https://collaborative-ide-ynie.onrender.com/api/ai/ask"
-                        : "http://localhost:3000/api/ai/ask"
-
-                const response = await axios.post(backendUrl, { question })
+                const response = await axios.post(`${BACKEND_URL}/api/ai/ask`, { question })
 
                 if (response.status === 200) {
                     const aiAnswer: Message = {
@@ -68,8 +71,18 @@ const AIAssistant = () => {
                 }
             }
         } catch (error: unknown) {
-            console.error("Error asking AI:", error)
-            toast.error("An error occurred while asking the AI.")
+            if (axios.isAxiosError(error)) {
+                if (error.response?.status === 404) {
+                    console.error('Resource not found:', error.response.config.url);
+                    toast.error("Requested resource not found.");
+                } else {
+                    console.error('Request failed:', error.message);
+                    toast.error("An error occurred while asking the AI.");
+                }
+            } else {
+                console.error("Unexpected error:", error);
+                toast.error("An unexpected error occurred.");
+            }
         } finally {
             setLoading(false)
         }

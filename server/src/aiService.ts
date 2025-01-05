@@ -1,9 +1,10 @@
 import axios from 'axios';
+import dotenv from 'dotenv';
 
-// Determine the API base URL based on the environment
-const API_BASE_URL = process.env.NODE_ENV === "production"
-    ? 'https://collaborative-ide-ynie.onrender.com' 
-    : 'http://localhost:3000';
+dotenv.config();
+
+// Determine the API base URL from the .env file
+const API_BASE_URL = process.env.API_BASE_URL;
 
 const getAIResponse = async (userMessage: string): Promise<string> => {
     try {
