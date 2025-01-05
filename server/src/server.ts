@@ -19,7 +19,7 @@ dotenv.config();
 const app = express();
 
 const allowedOrigins = [
-  'https://collaborative-ide-iota.vercel.app/',
+  'https://collaborative-ide-iota.vercel.app',
   'http://localhost:5173',
   'https://collaborative-ide-ynie.onrender.com' // Add this line
 ];
@@ -41,11 +41,19 @@ if (!mongoUri) {
 }
 
 mongoose.connect(mongoUri, {
-  serverSelectionTimeoutMS: 30000, // Increase timeout to 30 seconds
-  socketTimeoutMS: 45000, // Increase socket timeout to 45 seconds
+  serverSelectionTimeoutMS: 30000,
+  socketTimeoutMS: 45000,
 } as mongoose.ConnectOptions)
-.then(() => console.log('MongoDB connected'))
-.catch((err) => console.error('MongoDB connection error:', err));
+.then(() => {
+  console.log('MongoDB connected');
+  // Log the connection details
+  console.log('Connection state:', mongoose.connection.readyState);
+  console.log('Database name:', mongoose.connection.name);
+})
+.catch((err) => {
+  console.error('MongoDB connection error:', err);
+  console.error('Full error details:', JSON.stringify(err, null, 2));
+});
 
 // Your existing routes and middleware
 app.use('/api/lint', lintRoutes);
@@ -56,6 +64,11 @@ app.use(express.static(path.join(__dirname, "public")));
 // Global error handler
 app.use((err: Error, req: Request, res: Response, next: express.NextFunction) => {
   console.error('Unhandled error:', err);
+  console.error('Stack trace:', err.stack);
+  console.error('Request path:', req.path);
+  console.error('Request method:', req.method);
+  console.error('Request body:', req.body);
+  
   res.status(500).json({
     message: 'An unexpected error occurred',
     error: err.message,
